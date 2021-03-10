@@ -10,11 +10,6 @@ function App() {
   const [newTodo, setNewTodo] = React.useState('');
   const [removeTodo, setRemoveTodo] = React.useState('');
 
-  // React.useEffect(() => {
-  //   console.log(`${JSON.stringify(undoStack)}`);
-  //   console.log(`${JSON.stringify(redoStack)}`);
-  // })
-
   function pushInUndoStack(element) {
     let arr = undoStack;
     arr.push(element);
@@ -47,6 +42,8 @@ function App() {
 
   function undo() {
     let top = popFromUndoStack();
+    if (top == false)
+      return;
     if (top.operation == "add") {
       top.operation = "rem";
       pushInRedoStack(top);
@@ -60,6 +57,8 @@ function App() {
 
   function redo() {
     let top = popFromRedoStack();
+    if (top == false)
+      return;
     if (top.operation == "add") {
       top.operation = "rem";
       pushInUndoStack(top);
@@ -118,6 +117,8 @@ function App() {
   }
 
   const handleAddClick = () => {
+    if (newTodo === '')
+      return;
     add(newTodo, list.length);
     setNewTodo('');
   }
@@ -126,8 +127,10 @@ function App() {
     if (list.length == 0)
       return;
     const index = searchArray(removeTodo);
-    if (index == -1)
+    if (index == -1) {
+      setRemoveTodo('');
       return;
+    }
     remove(removeTodo, index);
     setRemoveTodo('');
   }
@@ -138,7 +141,7 @@ function App() {
       transform: 'translate(-50%, -50%)'
     }} >
       <div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: 50, marginBottom: 40 }} >
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: 50, marginBottom: 40, }} >
           <b>TODO List with undo/redo</b>
         </div>
         <div style={{ display: "flex", flexDirection: "row-reverse", marginTop: -20, marginBottom: 40 }} >
@@ -159,12 +162,9 @@ function App() {
         <button style={{ height: 50, width: 70, fontSize: 20, backgroundColor: "#e1ed58" }} onClick={undo}>Undo</button>
         <button style={{ height: 50, width: 70, fontSize: 20, backgroundColor: "#54ace3" }} onClick={redo}>Redo</button>
       </div>
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: 30 }} >
+      <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         {list.map((val, i) => (
-          <>
-          <p key={i} >{val}<br/></p>
-          
-          </>
+          <li key={i} >{val}</li>
         ))}
       </div>
     </div>
